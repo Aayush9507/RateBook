@@ -12,21 +12,22 @@ import java.net.Socket;
 class RegisterAndLoginController {
     static allowedMethods =[register:"POST",login:"POST"]
     
-    def beforeInterceptor = [action: this.&auth]
-    def afterIntereceptor = [action: this.&auth]
-
-    private auth() {
-        if(params.uid!='qwertyasdfzxcv007'){
-            def json = [status : 0, message : "Unauthorized to use APIs"]
-            render json as JSON
-            return false
-        }
-    }
+//    def beforeInterceptor = [action: this.&auth]
+//    def afterIntereceptor = [action: this.&auth]
+//
+//    private auth() {
+//        if(params.uid!='qwertyasdfzxcv007'){
+//            def json = [status : 0, message : "Unauthorized to use APIs"]
+//            render json as JSON
+//            return false
+//        }
+//    }
     def index() { 
     
     }
     
     def register() { 
+        println params
         def json = [status : 0, message : ""]
         def clientOut = getOutputStream()
 
@@ -41,6 +42,7 @@ class RegisterAndLoginController {
 
             // Receiving Response from the server
             def reponse = getInputStream(clientOut[0], clientOut[1])
+            session['user'] = params.email
             json = [status : 1, message : reponse]
             render json as JSON
 
@@ -64,7 +66,7 @@ class RegisterAndLoginController {
 
             // Receiving Response from the server
             def reponse = getInputStream(clientOut[0], clientOut[1])
-            print response
+            session['user'] = params.email
             json = [status : 1, message : reponse]
             render json as JSON
 
