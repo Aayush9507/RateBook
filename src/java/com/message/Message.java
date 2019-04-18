@@ -93,7 +93,7 @@ public abstract class Message {
             return encodeString(uuid.toString());
         }
         public Encoder encodeShort(short value) throws IOException {
-            ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES);
+            ByteBuffer buffer = ByteBuffer.allocate((Short.SIZE)/8);
             buffer.order(ByteOrder.BIG_ENDIAN);
             buffer.putShort(value);
             byteArrayOutputStream.write(buffer.array());
@@ -102,7 +102,7 @@ public abstract class Message {
 
 
         public Encoder encodeFloat(float value) throws IOException {
-            ByteBuffer buffer = ByteBuffer.allocate(Float.BYTES);
+            ByteBuffer buffer = ByteBuffer.allocate((Float.SIZE)/8);
             buffer.order(ByteOrder.BIG_ENDIAN);
             buffer.putFloat(value);
             byteArrayOutputStream.write(buffer.array());
@@ -110,7 +110,7 @@ public abstract class Message {
         }
 
         public Encoder encodeInt(int value) throws IOException {
-            ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+            ByteBuffer buffer = ByteBuffer.allocate((Integer.SIZE)/8);
             buffer.order(ByteOrder.BIG_ENDIAN);
             buffer.putInt(value);
             byteArrayOutputStream.write(buffer.array());
@@ -123,7 +123,7 @@ public abstract class Message {
         }
 
         public Encoder encodeLong(long value) throws IOException {
-            ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+            ByteBuffer buffer = ByteBuffer.allocate((Long.SIZE)/8);
             buffer.order(ByteOrder.BIG_ENDIAN);
             buffer.putLong(value);
             byteArrayOutputStream.write(buffer.array());
