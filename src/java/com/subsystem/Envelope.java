@@ -4,29 +4,47 @@ import com.message.Message;
 import java.net.InetSocketAddress;
 import java.util.Objects;
 
-public class Envelope {
-    Message message;
-    InetSocketAddress inetSocketAddress;
+public class Envelope<T> {
+    private T message;
 
-    Envelope(Message message, InetSocketAddress inetSocketAddress) {
+    public InetSocketAddress getInetSocketAddress() {
+        return inetSocketAddress;
+    }
+
+    public void setInetSocketAddress(InetSocketAddress inetSocketAddress) {
+        this.inetSocketAddress = inetSocketAddress;
+    }
+    private InetSocketAddress inetSocketAddress;
+
+    public Envelope(T message, InetSocketAddress inetSocketAddress) {
         this.message = message;
         this.inetSocketAddress = inetSocketAddress;
     }
 
-    public Message getMessage() {
+    public T getMessage() {
         return message;
     }
 
-    public void setMessage(Message message) {
-        this.message = message;
-    }
-
-    public InetSocketAddress getSrcInetSocketAddress() {
+    public InetSocketAddress getSourceInetSocketAddress() {
         return inetSocketAddress;
     }
 
-    public boolean isValidToSend(Message m, InetSocketAddress isa){
-        return m != null && isa != null && !Objects.equals(isa.getAddress().toString(), "0.0.0.0") && isa.getPort() != 0;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Envelope<?> envelope = (Envelope<?>) o;
+        return Objects.equals(message, envelope.message) &&
+                Objects.equals(inetSocketAddress, envelope.inetSocketAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(message, inetSocketAddress);
+    }
+
+    InetSocketAddress getSrcInetSocketAddress() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
 

@@ -2,15 +2,37 @@ package com.message;
 
 import java.io.IOException;
 import java.util.UUID;
-public  class RegisterUserMessage extends Message {
-    private short userId;
+
+public class RegisterUserMessage extends Message {
+
+    private String userId;
     private String Name;
     private String emailId;
     private String password;
     private String areaOfInterest;
+    String convId;
 
-    public RegisterUserMessage(UUID uuid, short userId, String Name, String emailId, String password, String areaOfInterest) {
-        super(MessageType.RegisterUser, uuid);
+    public String getConvId() {
+        return convId;
+    }
+
+    public void setConvId(String convId) {
+        this.convId = convId;
+    }
+
+    public String getMsgId() {
+        return msgId;
+    }
+
+    public void setMsgId(String msgId) {
+        this.msgId = msgId;
+    }
+    String msgId;
+
+    public RegisterUserMessage(String convId, String msgId, String userId, String Name, String emailId, String password, String areaOfInterest) {
+        super(MessageType.RegisterUser);
+        this.convId = convId;
+        this.msgId = msgId;
         this.userId = userId;
         this.Name = Name;
         this.emailId = emailId;
@@ -18,28 +40,28 @@ public  class RegisterUserMessage extends Message {
         this.areaOfInterest = areaOfInterest;
     }
 
-
     public static RegisterUserMessage decode(byte[] messageBytes) {
         Decoder decoder = new Decoder(messageBytes);
 
         if (decoder.decodeMessageType() != MessageType.RegisterUser) {
             throw new IllegalArgumentException();
         }
-        UUID uuid = decoder.decodeUUID();
-        short userId = decoder.decodeShort();
+        String convId = decoder.decodeString();
+        String msgId = decoder.decodeString();
+        String userId = decoder.decodeString();
         String Name = decoder.decodeString();
         String emailId = decoder.decodeString();
         String password = decoder.decodeString();
         String areaOfInterest = decoder.decodeString();
 
-        return new RegisterUserMessage(uuid, userId, Name, emailId, password, areaOfInterest);
+        return new RegisterUserMessage(convId, msgId, userId, Name, emailId, password, areaOfInterest);
     }
 
-    public short getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(short userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -79,8 +101,9 @@ public  class RegisterUserMessage extends Message {
     public byte[] encode() throws IOException {
         return new Encoder()
                 .encodeMessageType(messageType)
-                .encodeUUID(convId)
-                .encodeShort(userId)
+                .encodeString(convId)
+                .encodeString(msgId)
+                .encodeString(userId)
                 .encodeString(Name)
                 .encodeString(emailId)
                 .encodeString(password)

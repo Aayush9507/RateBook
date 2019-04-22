@@ -16,12 +16,12 @@ public class Dispatcher implements Runnable {
         while (keepRunning()) {
             Envelope env = udpComm.getEnvelope();
             if(env!=null){
-                Conversation c = ConversationDictionary.getConversation(env.getMessage().getConversationId());
-                if(c!=null){
-                    c.process(env);
-                }else{
-                    cf.CreateFromEnvelope(env);
-                }
+//                Conversation c = ConversationDictionary.getConversation(env.getMessage().getConvId());
+//                if(c!=null){
+////                    c.process(env);
+//                }else{
+////                    cf.CreateEnvelope(env);
+//                }
             }
         }
     }
