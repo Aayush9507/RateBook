@@ -21,9 +21,11 @@ public class ConversationFactory {
         System.out.println("Creating Envelope using factory");
         RegisterUserMessage rum;
         String msgId = UUID.randomUUID().toString();
-        rum = new RegisterUserMessage(convId, msgId, userId, Name, emailId, password, areaOfInterest);
-        System.out.println("rummmmm"+rum);
+        rum = new RegisterUserMessage(userId, Name, emailId, password, areaOfInterest);
+        System.out.println("rummmmm"+rum.getAreaOfInterest()+rum.getName()+rum.getEmailId()+rum.getUserId()+rum.getPassword());
         Envelope env = new Envelope(rum, new InetSocketAddress("localhost", 8082));
+//        byte [] b = rum.encode();
+//        System.out.println("No. of bytes after creating and encoding the object"+b.length);
         return env;
     }
 }

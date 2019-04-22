@@ -48,8 +48,8 @@ public class UDPComm {
         datagramChannel.bind(null);
         System.out.println("datagramChannel"+outgoingEnvelope.getMessage());
         byte [] messageBytes = outgoingEnvelope.getMessage().encode();
-        System.out.println("outgoingEnvelope.getMessage()"+outgoingEnvelope.getMessage().getConversationId());
-        System.out.println("outgoingEnvelope.getMessage()"+outgoingEnvelope.getMessage().getMessageType());
+        System.out.println("Envelope Message class name"+outgoingEnvelope.getMessage().getClass().getName());
+        System.out.println("outgoingEnvelope conversation Id"+outgoingEnvelope.getMessage().getConversationId());
         System.out.println("messageBytes"+messageBytes.length);
         ByteBuffer buffer = ByteBuffer.allocate(4096);
         String str = "Example String";

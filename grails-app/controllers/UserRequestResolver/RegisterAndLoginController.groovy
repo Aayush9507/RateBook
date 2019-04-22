@@ -20,6 +20,7 @@ class RegisterAndLoginController {
     }
     
     def register() { 
+        println "Registering"
         CommSubSystem subsystemObj = new CommSubSystem()
         ConversationFactory cf = new ConversationFactory()
         println "cf"+cf
@@ -30,7 +31,9 @@ class RegisterAndLoginController {
             def conv = createConversation(cf)
             def convId = conv.getConvId()
             def env = createEnvelope(cf,convId)
-            print "envelope created"+env
+//            print "envelope created....."+env.getMessage().getClass().getName()
+//            byte [] b = env.getMessage().getAreaOfInterest()
+            System.out.println("No. of bytes after creating and encoding the object controller"+env.getMessage().conversationId);
             sendEnvelope(subsystemObj,env)
 
             // Receiving Response from the metadata server

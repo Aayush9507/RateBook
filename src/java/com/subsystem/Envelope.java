@@ -4,8 +4,8 @@ import com.message.Message;
 import java.net.InetSocketAddress;
 import java.util.Objects;
 
-public class Envelope<T> {
-    private T message;
+public class Envelope {
+    private Message message;
 
     public InetSocketAddress getInetSocketAddress() {
         return inetSocketAddress;
@@ -16,24 +16,24 @@ public class Envelope<T> {
     }
     private InetSocketAddress inetSocketAddress;
 
-    public Envelope(T message, InetSocketAddress inetSocketAddress) {
+    public Envelope(Message message, InetSocketAddress inetSocketAddress) {
         this.message = message;
         this.inetSocketAddress = inetSocketAddress;
     }
 
-    public T getMessage() {
-        return message;
+    public Message getMessage() {
+        return this.message;
     }
 
     public InetSocketAddress getSourceInetSocketAddress() {
-        return inetSocketAddress;
+        return this.inetSocketAddress;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Envelope<?> envelope = (Envelope<?>) o;
+        Envelope envelope = (Envelope) o;
         return Objects.equals(message, envelope.message) &&
                 Objects.equals(inetSocketAddress, envelope.inetSocketAddress);
     }
