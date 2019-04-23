@@ -4,6 +4,9 @@
  */
 package SearchAndCreateProduct
 
+import com.subsystem.CommSubSystem
+import com.subsystem.ConversationFactory
+import com.subsystem.UDPComm
 import grails.converters.JSON
 import groovy.sql.Sql
 import java.io.BufferedReader;
@@ -30,18 +33,17 @@ class SearchAndCreateController {
     def search() { 
         println params 
         def json = [status : 0, message : ""]
-        def clientOut = getOutputStream()
 
         try{
-            println "Sending Request to server"
-            def messageOut = [];
-            messageOut.add(params.msgType)
-            messageOut.add(params.query)
-            clientOut[1].writeObject(messageOut);
+            println "Sending Request to searching server"
+            CommSubSystem subsystemObj = new CommSubSystem()
+            ConversationFactory cf = new ConversationFactory()
+            def msgType = params.msgType
+            def conv = createConversation(cf)
+            def env = createEnvelope(cf,msgType)
+            sendEnvelope(subsystemObj,env)
 
-            println "Receiving Response from the server"
-            def reponse = getInputStream(clientOut[0], clientOut[1])
-            json = [status : 1, message : reponse]
+            json = [status : 1, message : "Search Response"]
             render json as JSON
 
         }catch(Exception ex){
@@ -51,10 +53,9 @@ class SearchAndCreateController {
     }
     
     def create() {
-        println "params"+params
-        println "session['user']"+session['user']
+        println "create params"+params
+
         def json = [status : 0, message : ""]
-        def clientOut = getOutputStream()
         try{
             // Sending Request to server
             def messageOut = [];
@@ -64,14 +65,6 @@ class SearchAndCreateController {
             messageOut.add(params.itemDesc)
             messageOut.add(params.itemFollowCount)
             messageOut.add(params.itemReviewCount)
-            //                    def userId = Users.findByEmail(session['user'])
-            //                    println userId
-            messageOut.add(session['user'])
-            clientOut[1].writeObject(messageOut);
-
-            // Receiving Response from the server
-            def reponse = getInputStream(clientOut[0], clientOut[1])
-            print response
             json = [status : 1, message : reponse]
             render json as JSON
 
@@ -81,20 +74,49 @@ class SearchAndCreateController {
         }
     }
     
-    def getOutputStream(){
-        String host = "localhost";
-        int port = 8084;
-        Socket client = new Socket(host, port);
-        ObjectOutputStream clientOut = new ObjectOutputStream(client.getOutputStream());
-        return [client,clientOut]
+    def createConversation(cf){
+        return cf.CreateConversation()
     }
     
-    def getInputStream(client, clientOut){
-        print "saving response"
-        BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-        def res = reader.readLine();
-        println "res "+res
-        clientOut.flush();
+    def createEnvelope(cf,msgType){
+        def msgList = []
+        
+        if (msgType.equals("CreateProd")){
+            msgList.add("CreateProd")
+            msgList.add(params.userId)
+            msgList.add(params.name)
+            msgList.add(params.prodId)
+            msgList.add(params.price)
+        }
+        if (msgType.equals("FollowProd")){
+            msgList.add("FollowProd")
+            msgList.add(params.userId)
+            msgList.add(params.prodId)
+        }
+        if (msgType.equals("RateProd")){
+            msgList.add("RateProd")
+            msgList.add(params.prodId)
+            msgList.add(params.rating)
+            msgList.add(params.review)
+        }
+        if (msgType.equals("SearchProd")){
+            msgList.add("SearchProd")
+            msgList.add(params.prodName)
+            msgList.add(params.prodId)
+        }
+        
+        
+        print "Creating Envelope inside search and create controller..............."
+        def res = cf.CreateEnvelopee(msgList)
         return res
+    }
+    
+    def sendEnvelope(subsystemObj,Env){
+        print "Sending Envelope"+subsystemObj
+        //        print subsystemObj.Initialize()
+        //        print subsystemObj.setUdpComm(new UDPComm())
+        //        print "sendingggg"+subsystemObj.getUdpComm()
+        UDPComm UDPCommobj = new UDPComm()
+        UDPCommobj.send(Env)
     }
 }
