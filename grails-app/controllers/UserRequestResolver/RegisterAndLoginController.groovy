@@ -32,8 +32,8 @@ class RegisterAndLoginController {
             def conv = createConversation(cf)
             def convId = conv.getConvId()
             def env = createEnvelope(cf,msgType)
-//            print "envelope created....."+env.getMessage().getClass().getName()
-//            byte [] b = env.getMessage().getAreaOfInterest()
+            //            print "envelope created....."+env.getMessage().getClass().getName()
+            //            byte [] b = env.getMessage().getAreaOfInterest()
             System.out.println("No. of bytes after creating and encoding the object controller"+env.getMessage().conversationId);
             sendEnvelope(subsystemObj,env)
 
@@ -83,46 +83,46 @@ class RegisterAndLoginController {
         
         if (msgType.equals("RegisterUser")){
             msgList.add("RegisterUser")
-        msgList.add(params.userId)
-        msgList.add(params.name)
-        msgList.add(params.emailId)
-        msgList.add(params.password)
-        msgList.add(params.areaOfInterest)
+            msgList.add(params.userId)
+            msgList.add(params.name)
+            msgList.add(params.emailId)
+            msgList.add(params.password)
+            msgList.add(params.areaOfInterest)
         }
         if (msgType.equals("LoginUser")){
             msgList.add("LoginUser")
-        msgList.add(params.userId)
-        msgList.add(params.password)
+            msgList.add(params.userId)
+            msgList.add(params.password)
         }
         if (msgType.equals("CreateProd")){
             msgList.add("CreateProd")
-        msgList.add(params.userId)
-        msgList.add(params.name)
-        msgList.add(params.prodId)
-        msgList.add(params.price)
+            msgList.add(params.userId)
+            msgList.add(params.name)
+            msgList.add(params.prodId)
+            msgList.add(params.price)
         }
         if (msgType.equals("FollowProd")){
             msgList.add("FollowProd")
-        msgList.add(params.userId)
-        msgList.add(params.prodId)
+            msgList.add(params.userId)
+            msgList.add(params.prodId)
         }
         if (msgType.equals("RateProd")){
             msgList.add("RateProd")
-        msgList.add(params.prodId)
-        msgList.add(params.rating)
-        msgList.add(params.review)
+            msgList.add(params.prodId)
+            msgList.add(params.rating)
+            msgList.add(params.review)
         }
         if (msgType.equals("RateFeed")){
             msgList.add("RateFeed")
-        msgList.add(params.prodId)
-        msgList.add(params.vote)
-        msgList.add(params.reviewId)
-        msgList.add(params.userId)
+            msgList.add(params.prodId)
+            msgList.add(params.vote)
+            msgList.add(params.reviewId)
+            msgList.add(params.userId)
         }
         if (msgType.equals("SearchProd")){
             msgList.add("SearchProd")
-        msgList.add(params.prodName)
-        msgList.add(params.prodId)
+            msgList.add(params.prodName)
+            msgList.add(params.prodId)
         }
         if (msgType.equals("ACKMessage")){
             msgList.add("ACKMessage")
