@@ -28,9 +28,10 @@ class RegisterAndLoginController {
 
         try{
             // Sending Request to metadata server
+            def msgType = params.msgType
             def conv = createConversation(cf)
             def convId = conv.getConvId()
-            def env = createEnvelope(cf,convId)
+            def env = createEnvelope(cf,msgType)
 //            print "envelope created....."+env.getMessage().getClass().getName()
 //            byte [] b = env.getMessage().getAreaOfInterest()
             System.out.println("No. of bytes after creating and encoding the object controller"+env.getMessage().conversationId);
@@ -76,9 +77,17 @@ class RegisterAndLoginController {
         return cf.CreateConversation()
     }
     
-    def createEnvelope(cf,convId){
-        print "creating envelope"+cf+convId+params
-        def res = cf.CreateEnvelopee(convId,params.userId,params.name,params.emailId,params.password,params.areaOfInterest)
+    def createEnvelope(cf,msgType){
+        
+        def msgList = []
+        msgList.add("RegisterUser")
+        msgList.add(params.userId)
+        msgList.add(params.name)
+        msgList.add(params.emailId)
+        msgList.add(params.password)
+        msgList.add(params.areaOfInterest)
+        print "Creating Envelope inside RR controller..............."
+        def res = cf.CreateEnvelopee(msgList)
         print "response"+res
         return res
     }
