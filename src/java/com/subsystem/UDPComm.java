@@ -13,7 +13,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.FutureTask;
 
-public class UDPComm {
+public class UDPComm implements Runnable{
 
     private DatagramChannel datagramChannel;
 
@@ -41,12 +41,13 @@ public class UDPComm {
 
     public boolean send(Envelope outgoingEnvelope) throws IOException {
         System.out.println("Request Resolver UDP Comm");
-//        InetAddress hostIP = InetAddress.getLocalHost();
-        InetSocketAddress myAddress = new InetSocketAddress("10.0.0.54", 8090);
-        System.out.println("myAddress"+myAddress);
+        InetAddress hostIP = InetAddress.getLocalHost();
+//        InetSocketAddress myAddress = new InetSocketAddress("10.0.0.54", 8089);
+        InetSocketAddress myAddress = new InetSocketAddress(hostIP, 8087);
+        System.out.println("myAddress" + myAddress);
         DatagramChannel datagramChannel = DatagramChannel.open();
         datagramChannel.bind(null);
-        System.out.println("datagramChannel"+outgoingEnvelope.getMessage());
+        System.out.println("datagramChannel" + outgoingEnvelope.getMessage());
         byte[] messageBytes = outgoingEnvelope.getMessage().encode();
         datagramChannel.send(ByteBuffer.wrap(messageBytes), myAddress);
         System.out.println("Sending request Via UDP");
@@ -68,7 +69,6 @@ public class UDPComm {
     public void run() {
         try {
             Envelope e = receive();
-            // TODO: put into a queue
             receiveEnvelopeQueue.add(e);
         } catch (IOException e) {
             e.printStackTrace();
