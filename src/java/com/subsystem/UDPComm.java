@@ -41,19 +41,14 @@ public class UDPComm {
 
     public boolean send(Envelope outgoingEnvelope) throws IOException {
         System.out.println("Request Resolver UDP Comm");
-        InetAddress hostIP = InetAddress.getLocalHost();
-        InetSocketAddress myAddress = new InetSocketAddress(hostIP, 8089);
+//        InetAddress hostIP = InetAddress.getLocalHost();
+        InetSocketAddress myAddress = new InetSocketAddress("10.0.0.54", 8090);
         System.out.println("myAddress"+myAddress);
         DatagramChannel datagramChannel = DatagramChannel.open();
         datagramChannel.bind(null);
         System.out.println("datagramChannel"+outgoingEnvelope.getMessage());
-        byte [] messageBytes = outgoingEnvelope.getMessage().encode();
-        System.out.println("Envelope Message class name"+outgoingEnvelope.getMessage().getClass().getName());
-        System.out.println("outgoingEnvelope conversation Id"+outgoingEnvelope.getMessage().getConversationId());
-        System.out.println("messageBytes"+messageBytes.length);
-        ByteBuffer buffer = ByteBuffer.allocate(4096);
-        String str = "Example String";
-        datagramChannel.send(buffer.put(messageBytes), myAddress);
+        byte[] messageBytes = outgoingEnvelope.getMessage().encode();
+        datagramChannel.send(ByteBuffer.wrap(messageBytes), myAddress);
         System.out.println("Sending request Via UDP");
         return true;
     }
