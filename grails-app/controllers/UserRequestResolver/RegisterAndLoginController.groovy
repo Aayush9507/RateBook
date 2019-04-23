@@ -78,7 +78,6 @@ class RegisterAndLoginController {
     }
     
     def createEnvelope(cf,msgType){
-        
         def msgList = []
         
         if (msgType.equals("RegisterUser")){
@@ -89,29 +88,13 @@ class RegisterAndLoginController {
             msgList.add(params.password)
             msgList.add(params.areaOfInterest)
         }
+        
         if (msgType.equals("LoginUser")){
             msgList.add("LoginUser")
             msgList.add(params.userId)
             msgList.add(params.password)
         }
-        if (msgType.equals("CreateProd")){
-            msgList.add("CreateProd")
-            msgList.add(params.userId)
-            msgList.add(params.name)
-            msgList.add(params.prodId)
-            msgList.add(params.price)
-        }
-        if (msgType.equals("FollowProd")){
-            msgList.add("FollowProd")
-            msgList.add(params.userId)
-            msgList.add(params.prodId)
-        }
-        if (msgType.equals("RateProd")){
-            msgList.add("RateProd")
-            msgList.add(params.prodId)
-            msgList.add(params.rating)
-            msgList.add(params.review)
-        }
+
         if (msgType.equals("RateFeed")){
             msgList.add("RateFeed")
             msgList.add(params.prodId)
@@ -119,11 +102,7 @@ class RegisterAndLoginController {
             msgList.add(params.reviewId)
             msgList.add(params.userId)
         }
-        if (msgType.equals("SearchProd")){
-            msgList.add("SearchProd")
-            msgList.add(params.prodName)
-            msgList.add(params.prodId)
-        }
+        
         if (msgType.equals("ACKMessage")){
             msgList.add("ACKMessage")
         }
