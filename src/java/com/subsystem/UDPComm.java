@@ -2,7 +2,7 @@ package com.subsystem;
 
 import com.message.Message;
 import com.message.RegisterUserMessage;
-
+import com.subsystem.Dispatcher;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class UDPComm implements Runnable {
+public class UDPComm extends Dispatcher implements Runnable {
 
     private DatagramChannel datagramChannel = null;
     Queue receiveEnvelopeQueue = new ConcurrentLinkedQueue();
@@ -75,16 +75,19 @@ public class UDPComm implements Runnable {
             Envelope e = receive();
             System.out.println("e" + e.getMessage().getConversationId());
             receiveEnvelopeQueue.add(e);
+            System.out.println("Added env in queue");
+            dispatch(e);
+                    
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public Envelope getEnvelope() {
-        // return message from queue with timeout
-//        System.out.println("in get env");
-//        System.out.println(receiveEnvelopeQueue.peek().getClass().getName());
-        Envelope env = (Envelope) receiveEnvelopeQueue.peek();
-        return env;
-    }
+//    public Envelope getEnvelope() {
+//        // return message from queue with timeout
+////        System.out.println("in get env");
+////        System.out.println(receiveEnvelopeQueue.peek().getClass().getName());
+//        Envelope env = (Envelope) receiveEnvelopeQueue.peek();
+//        return env;
+//    }
 }

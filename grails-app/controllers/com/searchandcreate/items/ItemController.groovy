@@ -64,11 +64,14 @@ class ItemController {
 //        ConversationFactory cf = new ConversationFactory()
         
         UDPComm c1 = new UDPComm();
-         while(true){
-            print "Listening...."
-            c1.receive()
-        }
+//         while(true){
+//            print "Listening...."
+//            c1.receive()
+//        }
 //        println "cf"+cf
+        Thread udpCommThread =  new Thread(c1);
+        udpCommThread.start();
+//        t.start()
        
         def msgType = params.msgType
         if (msgType.equals("SearchProd"))

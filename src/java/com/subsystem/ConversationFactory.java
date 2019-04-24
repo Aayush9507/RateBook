@@ -1,5 +1,6 @@
 package com.subsystem;
 import com.message.Message;
+import static com.subsystem.Conversation.PossibleState;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -59,12 +60,18 @@ public class ConversationFactory {
     }
 
     public  Conversation CreateFromEnvelope(Envelope envelope) {
-        Conversation conversation = null;
-        Message.MessageType messageType = envelope.getMessage().getMessageType();
+        Conversation conversation = new Conversation();
+        conversation.inetSocketAddress = envelope.inetSocketAddress;
+        conversation.ConvId = UUID.randomUUID();
+        conversation.setState(PossibleState.NotInitialized);
+        return conversation;
+        
+        
+        
+//        Message.MessageType messageType = envelope.getMessage().getMessageType();
 //        if (messageType != null && _typeMappings.get(messageType))
 //            conversation = CreateResponderConversation(_typeMappings[messageType], envelope);
 
-        return conversation;
     }
 
     public Conversation CreateResponderConversation(String s, Envelope envelope){
