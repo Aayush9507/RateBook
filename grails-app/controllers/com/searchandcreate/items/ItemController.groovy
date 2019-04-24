@@ -7,8 +7,16 @@ package com.searchandcreate.items
 import RateITProd.RateItems
 import com.subsystem.CommSubSystem
 import com.subsystem.ConversationFactory
+import com.subsystem.Envelope
 import com.subsystem.UDPComm
 import groovy.sql.Sql
+import java.util.concurrent.Future
+import sun.org.mozilla.javascript.internal.Callable
+import java.util.concurrent.FutureTask; 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 class ItemController {
     def dataSource
@@ -60,18 +68,20 @@ class ItemController {
     }
     def searchAndCreate(){
         def json = [status : 0, message : ""]
-//        CommSubSystem subsystemObj = new CommSubSystem()
-//        ConversationFactory cf = new ConversationFactory()
-        
         UDPComm c1 = new UDPComm();
-//         while(true){
-//            print "Listening...."
-//            c1.receive()
-//        }
-//        println "cf"+cf
-        Thread udpCommThread =  new Thread(c1);
-        udpCommThread.start();
-//        t.start()
+        
+        ExecutorService service = Executors.newFixedThreadPool(10);
+        
+//        Thread udpCommThread =  new Thread(c1);
+//        udpCommThread.start()
+        
+        Future<Envelope> future = service.submit(c1);
+        Envelope env = future.get();
+        
+        System.out.println("Envelope received from call Method"+env.getMessage());
+
+//          executor.shutdown();
+       
        
         def msgType = params.msgType
         if (msgType.equals("SearchProd"))

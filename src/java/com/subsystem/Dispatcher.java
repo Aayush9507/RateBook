@@ -1,6 +1,6 @@
 package com.subsystem;
 
-public abstract class Dispatcher implements Runnable {
+public abstract class Dispatcher{
     UDPComm udpComm;
     ConversationFactory cf;
     private boolean doStop = false;
@@ -37,20 +37,6 @@ public abstract class Dispatcher implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //                
-//                
+//        return env.getMessage();
     }
-//    public void run() {
-//        while (keepRunning()) {
-//            Envelope env = udpComm.getEnvelope();
-//            if(env!=null){
-//                Conversation c = ConversationDictionary.getConversation(env.getMessage().getConversationId());
-//                if(c!=null){
-//                    c.process(env);
-//                }else{
-//                    cf.CreateFromEnvelope(env);
-//                }
-//            }
-//        }
-//    }
 }

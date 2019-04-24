@@ -1,5 +1,6 @@
 package com.subsystem;
-
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask; 
 import com.message.Message;
 import com.message.RegisterUserMessage;
 import com.subsystem.Dispatcher;
@@ -15,12 +16,12 @@ import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class UDPComm extends Dispatcher implements Runnable {
+public class UDPComm extends Dispatcher implements Callable {
 
     private DatagramChannel datagramChannel = null;
     Queue receiveEnvelopeQueue = new ConcurrentLinkedQueue();
     private InetAddress IPAddress;
-
+   
     public UDPComm(DatagramChannel datagramChannel, InetSocketAddress address) throws IOException {
         super();
         this.datagramChannel = datagramChannel;
@@ -68,21 +69,44 @@ public class UDPComm extends Dispatcher implements Runnable {
         datagramChannel.close();
     }
 
-    @Override
-    public void run() {
+//    @Override
+//    public void run() {
+//        try {
+//            System.out.println("Inside run method");
+//            Envelope e = receive();
+//            System.out.println("e" + e.getMessage().getConversationId());
+//            receiveEnvelopeQueue.add(e);
+//            System.out.println("Added env in queue");
+//            dispatch(e);
+//            
+//            
+//        } catch (Exception e) {
+//        }
+//    }
+    
+//    @Override
+    public Envelope call() throws Exception {
+        Envelope en = null;
         try {
             System.out.println("Inside run method");
-            Envelope e = receive();
-            System.out.println("e" + e.getMessage().getConversationId());
-            receiveEnvelopeQueue.add(e);
+            en = receive();
+            System.out.println("e" + en.getMessage().getConversationId());
+            receiveEnvelopeQueue.add(en);
             System.out.println("Added env in queue");
-            dispatch(e);
-                    
+            dispatch(en);
+            
+            
         } catch (Exception e) {
-            e.printStackTrace();
-        }
+ 
+        } return en;
     }
-
+    
+//    @Override
+//    public void run() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+ 
+}
 //    public Envelope getEnvelope() {
 //        // return message from queue with timeout
 ////        System.out.println("in get env");
@@ -90,4 +114,3 @@ public class UDPComm extends Dispatcher implements Runnable {
 //        Envelope env = (Envelope) receiveEnvelopeQueue.peek();
 //        return env;
 //    }
-}
