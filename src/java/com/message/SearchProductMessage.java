@@ -1,13 +1,14 @@
 package com.message;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class SearchProductMessage extends Message {
 
     private String prodName;
 
-    public SearchProductMessage(String prodName){
-        super(MessageType.SearchProd);
+    public SearchProductMessage(UUID uuid,String prodName){
+        super(MessageType.SearchProd,uuid);
         this.prodName=prodName;
     }
 
@@ -17,10 +18,10 @@ public class SearchProductMessage extends Message {
         if (decoder.decodeMessageType() != MessageType.SearchProd) {
             throw new IllegalArgumentException();
         }
-
+        UUID uuid = decoder.decodeUUID();
         String prodName = decoder.decodeString();
 
-        return new SearchProductMessage(prodName);
+        return new SearchProductMessage(uuid, prodName);
     }
 
     public String getProdName() {

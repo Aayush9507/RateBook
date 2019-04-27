@@ -15,18 +15,21 @@ public abstract class Dispatcher{
     public void dispatch(Envelope env) {
         try {
             System.out.println("Inside dispatcher's dispatch method");
-
+            
+            
             System.out.println("Message Type in Dispatcher " + env.getMessage().getMessageType());
             Conversation c = ConversationDictionary.getConversation(env.getMessage().getConversationId());
-            System.out.println("conv Id:" + c);
+            System.out.println("c:" + c);
             
             if (c == null) 
             {   
                 cf = new ConversationFactory();
                 System.out.println("Inside If condition");
                 c = cf.CreateFromEnvelope(env);
+                System.out.println(env.getMessage());
                 ConversationDictionary.addConversation(env.getMessage().getConversationId(), c);
                 System.out.println("Conv. added to dictionary");
+                
                 
             }
             else

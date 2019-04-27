@@ -7,8 +7,11 @@ package com.searchandcreate.items
 import RateITProd.RateItems
 import com.subsystem.CommSubSystem
 import com.subsystem.ConversationFactory
+import com.subsystem.ConversationDictionary
+import com.message.Message
 import com.subsystem.Envelope
 import com.subsystem.UDPComm
+import grails.converters.JSON
 import groovy.sql.Sql
 import java.util.concurrent.Future
 import sun.org.mozilla.javascript.internal.Callable
@@ -23,17 +26,19 @@ class ItemController {
     def index() {
 
     }
-    def search(){
-        def query = '%'+messageIn[1]+'%'
-        print "query "+query
+    def search(String messageIn){
+        String returnMessage = null;
+        def db = new Sql(dataSource)
+        def query = '%'+messageIn+'%'
         def itemQuery = "SELECT * FROM rate_items WHERE item_name LIKE $query"
         def resQueryItem=db.rows(itemQuery)
-
-        print "resQueryItem "+resQueryItem
+        
                     
         if(!resQueryItem){
             println "Item not exist"
-            returnMessage.add("Item Not Found, Please Create It to review")
+            returnMessage = "Item Not Found"
+            return returnMessage
+            
         }
         else{
             println "Item exist"
@@ -66,31 +71,78 @@ class ItemController {
             }
         }
     }
+    
+    def sendEnvelope(Env){
+        print "Sending Envelope Back"
+        UDPComm UDPCommobj = new UDPComm()
+        UDPCommobj.send(Env)
+    }
+    
+    def createEnvelope(cf,newmsgType,r){
+        print "rrrrrrrrrr"+r
+        def msgList = []
+        
+        
+        if (newmsgType.equals("SearchAck"))
+        {
+            msgList.add("SearchAck")
+            msgList.add(r)
+
+        print "Creating Envelope inside Search and create item controller"
+        def res = cf.CreateEnvelopee(msgList)
+        return res
+        }
+        }
+        
+    
+    
+    def createConversation(cf){
+        return cf.CreateConversation()
+    }
     def searchAndCreate(){
         def json = [status : 0, message : ""]
         UDPComm c1 = new UDPComm();
         
         ExecutorService service = Executors.newFixedThreadPool(10);
-        
-//        Thread udpCommThread =  new Thread(c1);
-//        udpCommThread.start()
-        
         Future<Envelope> future = service.submit(c1);
         Envelope env = future.get();
+        service.shutdown();        
+        String msgType = env.getMessage().getMessageType();
+        System.out.println("Message Type: "+msgType);
         
-        System.out.println("Envelope received from call Method"+env.getMessage());
-
-//          executor.shutdown();
-       
-       
-        def msgType = params.msgType
+        System.out.println("Message: "+env.getMessage());
+        System.out.println("Product Name: "+env.getMessage().getProdName());
+        String prodName = env.getMessage().getProdName();
+        
         if (msgType.equals("SearchProd"))
         {
-            search();
+            String r = search(prodName);
+            try{
+            
+            ConversationFactory cf = new ConversationFactory();
+            def newmsgType = "SearchAck"
+            println "MessageType assigned"+newmsgType;
+            
+            def conv = ConversationDictionary.getConversation(env.getMessage().getConversationId());
+            def convId = conv.getConvId()      
+            
+            println "Conv. id assigned"
+            println "r message is"+r
+            def env2 = createEnvelope(cf,newmsgType,r)
+            
+            
+            System.out.println("New envelope created");
+            sendEnvelope(env2)
+
+        }catch(Exception ex){
+        }
+            
         }
         if (msgType.equals("CreateProd"))
         {
             create();
         }
+        
+        
     }
-}
+    }

@@ -17,6 +17,7 @@ public abstract class Message {
     }
 
     Message(MessageType msgType, UUID uuid) {
+        System.out.println("Calling Super class constructor");
         messageType = msgType;
         convId = uuid;
     }
@@ -33,22 +34,19 @@ public abstract class Message {
         switch(messageType){
             case RegisterUser:
                 return RegisterUserMessage.decode(messageBytes);
-            case LoginUser:
-                return LoginUserMessage.decode(messageBytes);
+            
             case CreateProd:
                 return CreateProdMessage.decode(messageBytes);
-            case FollowProd:
-                return FollowProdMessage.decode(messageBytes);
+            
             case RateProd:
                 return RateProdMessage.decode(messageBytes);
-            case PostFeed:
-                return PostFeedMessage.decode(messageBytes);
-            case RateFeed:
-                return RateFeedMessage.decode(messageBytes);
+            
             case SearchProd:
                 return SearchProductMessage.decode(messageBytes);
-            case NotificationMessage:
-                return NotificationMessage.decode(messageBytes);
+            
+            case SearchAck:
+                return SearchAckMessage.decode(messageBytes);
+                
             case ACKMessage:
                 return ACKMessage.decode(messageBytes);
             default:
@@ -206,7 +204,8 @@ public abstract class Message {
         RateFeed,
         SearchProd,
         NotificationMessage,
-        ACKMessage;
+        ACKMessage,
+        SearchAck;
 
         public short toShort() {
             return (short) this.ordinal();

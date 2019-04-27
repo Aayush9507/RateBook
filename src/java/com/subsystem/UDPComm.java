@@ -1,6 +1,7 @@
 package com.subsystem;
+
 import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask; 
+import java.util.concurrent.FutureTask;
 import com.message.Message;
 import com.message.RegisterUserMessage;
 import com.subsystem.Dispatcher;
@@ -21,7 +22,7 @@ public class UDPComm extends Dispatcher implements Callable {
     private DatagramChannel datagramChannel = null;
     Queue receiveEnvelopeQueue = new ConcurrentLinkedQueue();
     private InetAddress IPAddress;
-   
+
     public UDPComm(DatagramChannel datagramChannel, InetSocketAddress address) throws IOException {
         super();
         this.datagramChannel = datagramChannel;
@@ -41,8 +42,19 @@ public class UDPComm extends Dispatcher implements Callable {
     }
 
     public boolean send(Envelope outgoingEnvelope) throws IOException {
+        System.out.println("Searching Server Resolver UDP Comm");
+        InetAddress hostIP = InetAddress.getLocalHost();
+//        InetSocketAddress myAddress = new InetSocketAddress("10.0.0.54", 8089);
+        InetSocketAddress myAddress = new InetSocketAddress(hostIP, 8086);
+        System.out.println("myAddress" + myAddress);
+        DatagramChannel datagramChannel = DatagramChannel.open();
+        datagramChannel.bind(null);
+        System.out.println("datagramChannel" + outgoingEnvelope.getMessage());
+//        System.out.println("string"+outgoingEnvelope.getMessage().getOutput());
         byte[] messageBytes = outgoingEnvelope.getMessage().encode();
-        datagramChannel.send(ByteBuffer.wrap(messageBytes), outgoingEnvelope.inetSocketAddress);
+        datagramChannel.send(ByteBuffer.wrap(messageBytes), myAddress);
+        System.out.println("length: "+messageBytes.length);
+        System.out.println("Sending request Via Search n create UDP");
         return true;
     }
 
@@ -57,7 +69,7 @@ public class UDPComm extends Dispatcher implements Callable {
         while (true) {
             InetSocketAddress sourceSocketAddress = (InetSocketAddress) datagramChannel.receive(buffer);
             byte[] messageBytes = Arrays.copyOf(buffer.array(), buffer.position());
-            System.out.print("\nData...: "+messageBytes.length);
+            System.out.print("\nData...: " + messageBytes.length);
             buffer.clear();
 //            datagramChannel.bind(null);
             System.out.println("Decoding received message");
@@ -69,43 +81,28 @@ public class UDPComm extends Dispatcher implements Callable {
         datagramChannel.close();
     }
 
-//    @Override
-//    public void run() {
-//        try {
-//            System.out.println("Inside run method");
-//            Envelope e = receive();
-//            System.out.println("e" + e.getMessage().getConversationId());
-//            receiveEnvelopeQueue.add(e);
-//            System.out.println("Added env in queue");
-//            dispatch(e);
-//            
-//            
-//        } catch (Exception e) {
-//        }
-//    }
-    
-//    @Override
+    @Override
     public Envelope call() throws Exception {
         Envelope en = null;
         try {
             System.out.println("Inside run method");
             en = receive();
-            System.out.println("e" + en.getMessage().getConversationId());
+            
+            System.out.println(".........................." + en.getMessage());
             receiveEnvelopeQueue.add(en);
             System.out.println("Added env in queue");
             dispatch(en);
-            
-            
+
         } catch (Exception e) {
- 
-        } return en;
+
+        }
+        return en;
     }
-    
+
 //    @Override
 //    public void run() {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
- 
 }
 //    public Envelope getEnvelope() {
 //        // return message from queue with timeout
