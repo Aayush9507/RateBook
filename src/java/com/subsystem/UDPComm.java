@@ -16,9 +16,18 @@ import java.nio.channels.DatagramChannel;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import com.subsystem.Encryption;
+import com.subsystem.Decryption;
+
+
+import java.security.Security;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 public class UDPComm extends Dispatcher implements Callable {
-
+    
+    private static Cipher cipher = null;
     private DatagramChannel datagramChannel = null;
     Queue receiveEnvelopeQueue = new ConcurrentLinkedQueue();
     private InetAddress IPAddress;
@@ -41,19 +50,27 @@ public class UDPComm extends Dispatcher implements Callable {
         datagramChannel.bind(null);
     }
 
-    public boolean send(Envelope outgoingEnvelope) throws IOException {
+    public boolean send(Envelope outgoingEnvelope) throws Exception {
+        
         System.out.println("Searching Server Resolver UDP Comm");
         InetAddress hostIP = InetAddress.getLocalHost();
 //        InetSocketAddress myAddress = new InetSocketAddress("10.0.0.54", 8089);
         InetSocketAddress myAddress = new InetSocketAddress(hostIP, 8086);
+        
         System.out.println("myAddress" + myAddress);
+        
         DatagramChannel datagramChannel = DatagramChannel.open();
         datagramChannel.bind(null);
-        System.out.println("datagramChannel" + outgoingEnvelope.getMessage());
-//        System.out.println("string"+outgoingEnvelope.getMessage().getOutput());
+        
         byte[] messageBytes = outgoingEnvelope.getMessage().encode();
-        datagramChannel.send(ByteBuffer.wrap(messageBytes), myAddress);
-        System.out.println("length: "+messageBytes.length);
+        
+        Encryption encrypter = new Encryption();
+        byte[] encryptedBytes =  encrypter.encrypt(messageBytes);
+        
+        System.out.println("Bytes After Encryption: " + messageBytes);
+        
+        datagramChannel.send(ByteBuffer.wrap(encryptedBytes), myAddress);
+        System.out.println("length: "+encryptedBytes.length);
         System.out.println("Sending request Via Search n create UDP");
         return true;
     }
@@ -73,7 +90,11 @@ public class UDPComm extends Dispatcher implements Callable {
             buffer.clear();
 //            datagramChannel.bind(null);
             System.out.println("Decoding received message");
-            return new Envelope(Message.decode(messageBytes), sourceSocketAddress);
+            
+            Decryption decrypter = new Decryption();
+            byte[] decryptedBytes = decrypter.decrypt(messageBytes);
+            return new Envelope(Message.decode(decryptedBytes), sourceSocketAddress);
+            
         }
     }
 
@@ -98,6 +119,20 @@ public class UDPComm extends Dispatcher implements Callable {
         }
         return en;
     }
+    
+    static byte[] encrypt(byte[] plainTextByte, SecretKey secretKey)
+			throws Exception {
+		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+		byte[] encryptedBytes = cipher.doFinal(plainTextByte);
+		return encryptedBytes;
+	}
+
+	static byte[] decrypt(byte[] encryptedBytes, SecretKey secretKey)
+			throws Exception {
+		cipher.init(Cipher.DECRYPT_MODE, secretKey);
+		byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+		return decryptedBytes;
+	}
 
 //    @Override
 //    public void run() {

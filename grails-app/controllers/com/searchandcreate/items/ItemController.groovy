@@ -79,7 +79,6 @@ class ItemController {
     }
     
     def createEnvelope(cf,newmsgType,r){
-        print "rrrrrrrrrr"+r
         def msgList = []
         
         
@@ -121,13 +120,9 @@ class ItemController {
             
             ConversationFactory cf = new ConversationFactory();
             def newmsgType = "SearchAck"
-            println "MessageType assigned"+newmsgType;
             
             def conv = ConversationDictionary.getConversation(env.getMessage().getConversationId());
             def convId = conv.getConvId()      
-            
-            println "Conv. id assigned"
-            println "r message is"+r
             def env2 = createEnvelope(cf,newmsgType,r)
             
             
