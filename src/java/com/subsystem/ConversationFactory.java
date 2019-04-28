@@ -64,7 +64,7 @@ public class ConversationFactory {
                 return new RateFeedMessage(uuid, mylist.get(1), Short.valueOf(mylist.get(2)), mylist.get(3), mylist.get(4));
             }
             if (pos.equals("SearchProd")) {
-                return new SearchProductMessage(uuid, mylist.get(1), mylist.get(2));
+                return new SearchProductMessage(uuid, mylist.get(1));
             }
             if (pos.equals("ACKMessage")) {
                 return new ACKMessage(uuid);

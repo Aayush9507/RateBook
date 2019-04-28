@@ -8,7 +8,7 @@ public class SearchProductMessage extends Message {
     private String prodName;
     private String prodId;
 
-    public SearchProductMessage(UUID uuid, String prodName, String prodId) {
+    public SearchProductMessage(UUID uuid, String prodName) {
         super(MessageType.SearchProd, uuid);
         this.prodName = prodName;
     }
@@ -21,9 +21,8 @@ public class SearchProductMessage extends Message {
         }
         UUID uuid = decoder.decodeUUID();
         String prodName = decoder.decodeString();
-        String prodId = decoder.decodeString();
 
-        return new SearchProductMessage(uuid, prodName, prodId);
+        return new SearchProductMessage(uuid, prodName);
     }
 
     public String getProdName() {
@@ -40,7 +39,6 @@ public class SearchProductMessage extends Message {
                 .encodeMessageType(messageType)
                 .encodeUUID(conversationId)
                 .encodeString(prodName)
-                .encodeString(prodId)
                 .toByteArray();
     }
 }

@@ -6,6 +6,7 @@ package SearchAndCreateProduct
 
 import com.subsystem.CommSubSystem
 import com.subsystem.ConversationFactory
+import com.subsystem.Envelope
 import com.subsystem.UDPComm
 import grails.converters.JSON
 import groovy.sql.Sql
@@ -13,6 +14,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.concurrent.FutureTask; 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future
+
 class SearchAndCreateController {
     static allowedMethods =[search:"POST",create:"POST"]
     
@@ -118,5 +125,28 @@ class SearchAndCreateController {
         //        print "sendingggg"+subsystemObj.getUdpComm()
         UDPComm UDPCommobj = new UDPComm()
         UDPCommobj.send(Env)
+        
+        Envelope e2 = UDPCommobj.receive()
+  
+        System.out.println("Envelope received from Searching server : "+e2);
+        System.out.println("Socket Address : "+e2.getInetSocketAddress());
+        System.out.println("Conversation ID : "+e2.getMessage().getConversationId());
+//        UDPComm c2 = new UDPComm();
+        
+//        ExecutorService service = Executors.newFixedThreadPool(10);
+//        Future<Envelope> future = service.submit(UDPCommobj);
+//        Envelope env = future.get();
+        
+//        service.shutdown();
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     }
 }

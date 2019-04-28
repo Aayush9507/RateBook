@@ -23,7 +23,7 @@ public abstract class Message {
     }
 
     public static Message decode(byte[] messageBytes) {
-        System.out.println("messageBytes.length" + messageBytes.length);
+        
         if (messageBytes.length < 2) {
             throw new IllegalArgumentException();
         }
@@ -31,7 +31,7 @@ public abstract class Message {
         Decoder decoder = new Decoder(messageBytes);
 
         MessageType messageType = decoder.decodeMessageType();
-
+        System.out.println("RR message class "+messageType);
         switch (messageType) {
             case RegisterUser:
                 return RegisterUserMessage.decode(messageBytes);
@@ -53,6 +53,8 @@ public abstract class Message {
                 return NotificationMessage.decode(messageBytes);
             case ACKMessage:
                 return ACKMessage.decode(messageBytes);
+            case SearchAck:
+                return SearchAckMessage.decode(messageBytes);
             default:
                 throw new IllegalArgumentException();
         }
@@ -215,7 +217,8 @@ public abstract class Message {
         RateFeed,
         SearchProd,
         NotificationMessage,
-        ACKMessage;
+        ACKMessage,
+        SearchAck;
 
         public short toShort() {
             return (short) this.ordinal();

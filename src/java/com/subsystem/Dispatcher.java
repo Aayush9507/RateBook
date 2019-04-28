@@ -1,6 +1,6 @@
 package com.subsystem;
 
-public class Dispatcher implements Runnable {
+public class Dispatcher implements Runnable{
     UDPComm udpComm;
     ConversationFactory cf;
     private boolean doStop = false;
