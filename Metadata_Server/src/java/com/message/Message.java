@@ -9,21 +9,22 @@ import java.util.Objects;
 import java.util.UUID;
 
 public abstract class Message {
-    MessageType messageType;
-    UUID convId = UUID.randomUUID();
 
-    Message(MessageType msgType) {
+    protected MessageType messageType;
+    protected UUID conversationId = UUID.randomUUID();
+
+    protected Message(MessageType msgType) {
         messageType = msgType;
     }
 
-    Message(MessageType msgType, UUID uuid) {
-        System.out.println("Calling Super class constructor");
+    protected Message(MessageType msgType, UUID uuid) {
         messageType = msgType;
-        convId = uuid;
+        conversationId = uuid;
     }
 
     public static Message decode(byte[] messageBytes) {
-        if(messageBytes.length < 2) {
+        System.out.println("messageBytes.length" + messageBytes.length);
+        if (messageBytes.length < 2) {
             throw new IllegalArgumentException();
         }
 
@@ -31,22 +32,25 @@ public abstract class Message {
 
         MessageType messageType = decoder.decodeMessageType();
 
-        switch(messageType){
+        switch (messageType) {
             case RegisterUser:
                 return RegisterUserMessage.decode(messageBytes);
-            
+            case LoginUser:
+                return LoginUserMessage.decode(messageBytes);
             case CreateProd:
                 return CreateProdMessage.decode(messageBytes);
-            
+            case FollowProd:
+                return FollowProdMessage.decode(messageBytes);
             case RateProd:
                 return RateProdMessage.decode(messageBytes);
-            
+            case PostFeed:
+                return PostFeedMessage.decode(messageBytes);
+            case RateFeed:
+                return RateFeedMessage.decode(messageBytes);
             case SearchProd:
                 return SearchProductMessage.decode(messageBytes);
-            
-            case SearchAck:
-                return SearchAckMessage.decode(messageBytes);
-                
+            case NotificationMessage:
+                return NotificationMessage.decode(messageBytes);
             case ACKMessage:
                 return ACKMessage.decode(messageBytes);
             default:
@@ -61,12 +65,17 @@ public abstract class Message {
     }
 
     public UUID getConversationId() {
-        return convId;
+        return conversationId;
     }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Message message = (Message) o;
         return messageType == message.messageType;
     }
@@ -78,9 +87,9 @@ public abstract class Message {
 
     @Override
     public String toString() {
-        return "Message{" +
-                "messageType=" + messageType +
-                '}';
+        return "Message{"
+                + "messageType=" + messageType
+                + '}';
     }
 
     public static class Encoder {
@@ -90,17 +99,17 @@ public abstract class Message {
         public Encoder encodeUUID(UUID uuid) throws IOException {
             return encodeString(uuid.toString());
         }
+
         public Encoder encodeShort(short value) throws IOException {
-            ByteBuffer buffer = ByteBuffer.allocate((Short.SIZE)/8);
+            ByteBuffer buffer = ByteBuffer.allocate((Short.SIZE) / 8);
             buffer.order(ByteOrder.BIG_ENDIAN);
             buffer.putShort(value);
             byteArrayOutputStream.write(buffer.array());
             return this;
         }
 
-
         public Encoder encodeFloat(float value) throws IOException {
-            ByteBuffer buffer = ByteBuffer.allocate((Float.SIZE)/8);
+            ByteBuffer buffer = ByteBuffer.allocate((Float.SIZE) / 8);
             buffer.order(ByteOrder.BIG_ENDIAN);
             buffer.putFloat(value);
             byteArrayOutputStream.write(buffer.array());
@@ -108,7 +117,7 @@ public abstract class Message {
         }
 
         public Encoder encodeInt(int value) throws IOException {
-            ByteBuffer buffer = ByteBuffer.allocate((Integer.SIZE)/8);
+            ByteBuffer buffer = ByteBuffer.allocate((Integer.SIZE) / 8);
             buffer.order(ByteOrder.BIG_ENDIAN);
             buffer.putInt(value);
             byteArrayOutputStream.write(buffer.array());
@@ -121,17 +130,17 @@ public abstract class Message {
         }
 
         public Encoder encodeLong(long value) throws IOException {
-            ByteBuffer buffer = ByteBuffer.allocate((Long.SIZE)/8);
+            ByteBuffer buffer = ByteBuffer.allocate((Long.SIZE) / 8);
             buffer.order(ByteOrder.BIG_ENDIAN);
             buffer.putLong(value);
             byteArrayOutputStream.write(buffer.array());
             return this;
         }
 
-
         public Encoder encodeString(String value) throws IOException {
-            if (value==null)
-                value="";
+            if (value == null) {
+                value = "";
+            }
 
             byte[] textBytes = value.getBytes(Charset.forName("UTF-16BE"));
             encodeShort((short) (textBytes.length));
@@ -156,9 +165,11 @@ public abstract class Message {
             byteBuffer = ByteBuffer.wrap(messageBytes);
             byteBuffer.order(ByteOrder.BIG_ENDIAN);
         }
+
         public UUID decodeUUID() {
             return UUID.fromString(decodeString());
         }
+
         public short decodeShort() {
             return byteBuffer.getShort();
         }
@@ -204,8 +215,7 @@ public abstract class Message {
         RateFeed,
         SearchProd,
         NotificationMessage,
-        ACKMessage,
-        SearchAck;
+        ACKMessage;
 
         public short toShort() {
             return (short) this.ordinal();

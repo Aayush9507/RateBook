@@ -1,6 +1,9 @@
 package com.subsystem;
 
-public abstract class Dispatcher{
+import java.io.IOException;
+
+public class Dispatcher {
+
     UDPComm udpComm;
     ConversationFactory cf;
     private boolean doStop = false;
@@ -12,34 +15,24 @@ public abstract class Dispatcher{
     private synchronized boolean keepRunning() {
         return this.doStop == false;
     }
+
     public void dispatch(Envelope env) {
         try {
             System.out.println("Inside dispatcher's dispatch method");
-            
-            
+
             System.out.println("Message Type in Dispatcher " + env.getMessage().getMessageType());
             Conversation c = ConversationDictionary.getConversation(env.getMessage().getConversationId());
-            System.out.println("c:" + c);
-            
-            if (c == null) 
-            {   
+            System.out.println("Conversation "+c);
+            if (c == null) {
                 cf = new ConversationFactory();
-                System.out.println("Inside If condition");
                 c = cf.CreateFromEnvelope(env);
-                System.out.println(env.getMessage());
-                ConversationDictionary.addConversation(env.getMessage().getConversationId(), c);
-                System.out.println("Conv. added to dictionary");
-                
-                
+                System.out.println("Conversation created from factory"+c);
+                ConversationDictionary.addConversation(env.getMessage().getConversationId(),c);
             }
-            else
-            {
-                    cf.CreateFromEnvelope(env);
-            }
-            
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        return env.getMessage();
+        //                
+//                
     }
 }

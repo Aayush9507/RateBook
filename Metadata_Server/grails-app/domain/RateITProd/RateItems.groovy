@@ -5,7 +5,6 @@
 package RateITProd
 
 class RateItems {
-String userEmail
 String itemName
 String itemType
 String itemDesc

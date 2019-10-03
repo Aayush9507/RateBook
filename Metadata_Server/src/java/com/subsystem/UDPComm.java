@@ -1,10 +1,8 @@
 package com.subsystem;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
 import com.message.Message;
 import com.message.RegisterUserMessage;
-import com.subsystem.Dispatcher;
+
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -15,25 +13,23 @@ import java.nio.ByteOrder;
 import java.nio.channels.DatagramChannel;
 import java.util.Arrays;
 import java.util.Queue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import com.subsystem.Encryption;
-import com.subsystem.Decryption;
-
-
-import java.security.Security;
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 public class UDPComm extends Dispatcher implements Callable {
-    
-    private static Cipher cipher = null;
+
     private DatagramChannel datagramChannel = null;
-    Queue receiveEnvelopeQueue = new ConcurrentLinkedQueue();
+    Queue<Envelope> receiveEnvelopeQueue = new ConcurrentLinkedQueue<Envelope>();
+
+    public Queue<Envelope> getReceiveEnvelopeQueue() {
+        return receiveEnvelopeQueue;
+    }
     private InetAddress IPAddress;
+    private boolean flag;
 
     public UDPComm(DatagramChannel datagramChannel, InetSocketAddress address) throws IOException {
         super();
+        System.out.println("UDPCOmm constructor");
         this.datagramChannel = datagramChannel;
         if (address.getPort() != 0) {
             this.datagramChannel.bind(address);
@@ -43,6 +39,7 @@ public class UDPComm extends Dispatcher implements Callable {
     }
 
     public UDPComm() {
+
     }
 
     public void start() throws IOException {
@@ -50,35 +47,29 @@ public class UDPComm extends Dispatcher implements Callable {
         datagramChannel.bind(null);
     }
 
-    public boolean send(Envelope outgoingEnvelope) throws Exception {
-        
-        System.out.println("Searching Server Resolver UDP Comm");
+    public boolean send(Envelope outgoingEnvelope) throws IOException {
+//        System.out.println("send initiated");
+//        byte[] messageBytes = outgoingEnvelope.getMessage().encode();
+//        datagramChannel.send(ByteBuffer.wrap(messageBytes), outgoingEnvelope.inetSocketAddress);
+//        return true;
+        System.out.println("Request Resolver UDP Comm");
         InetAddress hostIP = InetAddress.getLocalHost();
 //        InetSocketAddress myAddress = new InetSocketAddress("10.0.0.54", 8089);
-        InetSocketAddress myAddress = new InetSocketAddress(hostIP, 8086);
-        
+        InetSocketAddress myAddress = new InetSocketAddress(hostIP, 8080);
         System.out.println("myAddress" + myAddress);
-        
         DatagramChannel datagramChannel = DatagramChannel.open();
         datagramChannel.bind(null);
-        
+        System.out.println("datagramChannel" + outgoingEnvelope.getMessage());
         byte[] messageBytes = outgoingEnvelope.getMessage().encode();
-        
-        Encryption encrypter = new Encryption();
-        byte[] encryptedBytes =  encrypter.encrypt(messageBytes);
-        
-        System.out.println("Bytes After Encryption: " + messageBytes);
-        
-        datagramChannel.send(ByteBuffer.wrap(encryptedBytes), myAddress);
-        System.out.println("length: "+encryptedBytes.length);
-        System.out.println("Sending request Via Search n create UDP");
+        datagramChannel.send(ByteBuffer.wrap(messageBytes), myAddress);
+        System.out.println("Sending request Via UDP");
         return true;
     }
 
     public Envelope receive() throws IOException {
         System.out.println("receiving.....");
         InetAddress hostIP = InetAddress.getLocalHost();
-        InetSocketAddress address = new InetSocketAddress(hostIP, 8089);
+        InetSocketAddress address = new InetSocketAddress(hostIP, 8086);
         DatagramChannel datagramChannel = DatagramChannel.open();
         DatagramSocket datagramSocket = datagramChannel.socket();
         datagramSocket.bind(address);
@@ -90,12 +81,9 @@ public class UDPComm extends Dispatcher implements Callable {
             buffer.clear();
 //            datagramChannel.bind(null);
             System.out.println("Decoding received message");
-            
-            Decryption decrypter = new Decryption();
-            byte[] decryptedBytes = decrypter.decrypt(messageBytes);
-            return new Envelope(Message.decode(decryptedBytes), sourceSocketAddress);
-            
+            return new Envelope(Message.decode(messageBytes), sourceSocketAddress);
         }
+
     }
 
     public void stop() throws IOException {
@@ -104,45 +92,31 @@ public class UDPComm extends Dispatcher implements Callable {
 
     @Override
     public Envelope call() throws Exception {
-        Envelope en = null;
+        Envelope e = null;
         try {
-            System.out.println("Inside run method");
-            en = receive();
-            
-            System.out.println(".........................." + en.getMessage());
-            receiveEnvelopeQueue.add(en);
-            System.out.println("Added env in queue");
-            dispatch(en);
+            System.out.println("Inside UDPComm run method");
+            e = receive();
 
-        } catch (Exception e) {
+            System.out.println("envelope's Conv ID " + e.getMessage().getConversationId());
+            receiveEnvelopeQueue.add(e);
+            System.out.println("Added in Receive Envelope Queue");
+            dispatch(e);
 
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return en;
+        return e;
     }
-    
-    static byte[] encrypt(byte[] plainTextByte, SecretKey secretKey)
-			throws Exception {
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-		byte[] encryptedBytes = cipher.doFinal(plainTextByte);
-		return encryptedBytes;
-	}
 
-	static byte[] decrypt(byte[] encryptedBytes, SecretKey secretKey)
-			throws Exception {
-		cipher.init(Cipher.DECRYPT_MODE, secretKey);
-		byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-		return decryptedBytes;
-	}
-
-//    @Override
-//    public void run() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
+    public Envelope getEnvelope() {
+        // return message from queue with timeout
+        System.out.println("Dispatcher Thread Started getEnvelope method");
+        Envelope env;
+        if (!receiveEnvelopeQueue.isEmpty()) {
+            env = receiveEnvelopeQueue.poll();
+            System.out.println("getEnvelope if condition");
+            return env;
+        }
+        return null;
+    }
 }
-//    public Envelope getEnvelope() {
-//        // return message from queue with timeout
-////        System.out.println("in get env");
-////        System.out.println(receiveEnvelopeQueue.peek().getClass().getName());
-//        Envelope env = (Envelope) receiveEnvelopeQueue.peek();
-//        return env;
-//    }

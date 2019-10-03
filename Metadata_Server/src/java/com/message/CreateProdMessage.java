@@ -1,8 +1,9 @@
 package com.message;
 
 import java.io.IOException;
+import java.util.UUID;
 
-public class CreateProdMessage extends Message{
+public class CreateProdMessage extends Message {
 
     private String userId;
     private String name;
@@ -41,12 +42,12 @@ public class CreateProdMessage extends Message{
         this.price = price;
     }
 
-    public CreateProdMessage(String userId, String name, String prodId, short price){
-        super(MessageType.CreateProd);
-        this.userId=userId;
-        this.name=name;
-        this.prodId=prodId;
-        this.price=price;
+    public CreateProdMessage(UUID uuid, String userId, String name, String prodId, short price) {
+        super(MessageType.CreateProd, uuid);
+        this.userId = userId;
+        this.name = name;
+        this.prodId = prodId;
+        this.price = price;
 
     }
 
@@ -56,19 +57,20 @@ public class CreateProdMessage extends Message{
         if (decoder.decodeMessageType() != Message.MessageType.CreateProd) {
             throw new IllegalArgumentException();
         }
-
+        UUID uuid = decoder.decodeUUID();
         String userId = decoder.decodeString();
         String name = decoder.decodeString();
         String prodId = decoder.decodeString();
         short price = decoder.decodeShort();
 
-        return new CreateProdMessage(userId, name, prodId, price);
+        return new CreateProdMessage(uuid, userId, name, prodId, price);
     }
 
     @Override
     public byte[] encode() throws IOException {
         return new Encoder()
                 .encodeMessageType(messageType)
+                .encodeUUID(conversationId)
                 .encodeString(userId)
                 .encodeString(name)
                 .encodeString(prodId)
@@ -76,6 +78,5 @@ public class CreateProdMessage extends Message{
                 .toByteArray();
 
     }
-
 
 }

@@ -3,7 +3,7 @@ dataSource {
     jmxExport: true
     driverClassName = "com.mysql.jdbc.Driver"
     username = "root"
-    password = "123456"
+    password = "dada007--"
 }
 hibernate {
     cache.use_second_level_cache = true
@@ -22,14 +22,14 @@ environments {
     test {
         dataSource {
             dbCreate = "update"
-            url = ""  // Test Server URL
+            url = ""   // Test Server URL
             dialect = "org.hibernate.dialect.MySQL5InnoDBDialect"
         }
     }
     production {
         dataSource {
             dbCreate = "update"
-            url = "" // Production URL
+            url = ""   // Production Server URL
             dialect = "org.hibernate.dialect.MySQL5InnoDBDialect"
             pooled = true
             properties {

@@ -1,12 +1,14 @@
 package com.subsystem;
 import com.message.ACKMessage;
 import com.message.CreateProdMessage;
+import com.message.FollowProdMessage;
+import com.message.LoginUserMessage;
 import com.message.Message;
+import com.message.RateFeedMessage;
 import com.message.RateProdMessage;
 import com.message.RegisterUserMessage;
-import com.message.SearchAckMessage;
 import com.message.SearchProductMessage;
-import static com.subsystem.Conversation.PossibleState;
+import com.subsystem.Conversation.PossibleState;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -15,8 +17,6 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class ConversationFactory {
-    private HashMap<Message.MessageType, UUID> _typeMappings = new HashMap<Message.MessageType, UUID>(); // Doubt
-
     public CommSubSystem ManagingSubsystem;
     public int DefaultMaxRetries;
     public int DefaultTimeout;
@@ -48,77 +48,70 @@ public class ConversationFactory {
         DefaultTimeout = defaultTimeout;
     }
 
-    protected void Add(Message.MessageType msgType, UUID convId)
-    {
-        if (!_typeMappings.containsKey(msgType))
-            _typeMappings.put(msgType, convId);
-    }
-
     public Conversation CreateFromConversationType() {
         Conversation conv = new Conversation();
-        conv.ConvId = conv.getConvId();
-        conv.MaxRetries = 2;
-        conv.State = Conversation.PossibleState.Working;
-        conv.MaxRetries = 4;
-        ConversationDictionary.addConversation(conv.ConvId,conv);
         return conv;
-    }
-
-    public boolean canIncomingMessageStartConversation(String messageType) {
-        return _typeMappings.containsKey(messageType);
     }
 
     public  Conversation CreateFromEnvelope(Envelope envelope) {
         Conversation conversation = new Conversation();
-        conversation.inetSocketAddress = envelope.inetSocketAddress;
-        conversation.ConvId = UUID.randomUUID();
-        conversation.setState(PossibleState.NotInitialized);
+        conversation.setInetSocketAddress(envelope.getSrcInetSocketAddress());
+        conversation.ConvId = UUID.randomUUID().toString();
+        conversation.setState(PossibleState.Working);
+        //Message.MessageType messageType = envelope.getMessage().getMessageType();
         return conversation;
-        
-        
-        
-//        Message.MessageType messageType = envelope.getMessage().getMessageType();
-//        if (messageType != null && _typeMappings.get(messageType))
-//            conversation = CreateResponderConversation(_typeMappings[messageType], envelope);
-
     }
     public Envelope CreateEnvelopee(ArrayList<String> msglist) throws IOException {
         System.out.println("Creating Envelope using factory"+msglist.get(0));
-//        System.out.println("Creating Envelope using factory"+msglist.get(1).getClass().getName());
-//        System.out.println("Creating Envelope using factory"+msglist.get(1));
         Message msg;
 
         EnvelopeFactory ef = new EnvelopeFactory();
         msg = ef.EnvelopeFactory(msglist);
-        System.out.println("Got Message from Envelope factory");
-        Envelope env = new Envelope(msg, new InetSocketAddress("localhost", 8089));
+        Envelope env = new Envelope(msg, new InetSocketAddress("localhost", 8082));
         return env;
     }
-        public class EnvelopeFactory 
-        {
+    public class EnvelopeFactory {
 
         public UUID uuid = UUID.randomUUID();
 
         public Message EnvelopeFactory(ArrayList<String> mylist) {
 
             String pos = mylist.get(0);
-            
-            if (pos.equals("SearchAck")) {
-//                System.out.println("Inside env factoryyyy"+mylist.get(1));
-//                System.out.println("Inside env factoryyyy"+mylist.get(1).getClass().getName());
-                return new SearchAckMessage(uuid, mylist.get(1));
+
+            if (pos.equals("RegisterUser")) {
+                System.out.println("0 "+mylist.get(0));
+                System.out.println("1 "+mylist.get(1));
+                System.out.println("2 "+mylist.get(2));
+                System.out.println("3 "+mylist.get(3));
+                System.out.println("4 "+mylist.get(4));
+                System.out.println("5 "+mylist.get(5));
+                return new RegisterUserMessage(uuid, mylist.get(1), mylist.get(2), mylist.get(3), mylist.get(4), mylist.get(5));
+            }
+
+            if (pos.equals("LoginUser")) {
+                return new LoginUserMessage(uuid, mylist.get(1), mylist.get(2));
+            }
+
+            if (pos.equals("CreateProd")) {
+                return new CreateProdMessage(uuid, mylist.get(1), mylist.get(2), mylist.get(3), Short.valueOf(mylist.get(4)));
+            }
+
+            if (pos.equals("FollowProd")) {
+                return new FollowProdMessage(uuid, mylist.get(1), mylist.get(2));
+            }
+            if (pos.equals("RateProd")) {
+                return new RateProdMessage(uuid, mylist.get(1), Float.valueOf(mylist.get(2)), mylist.get(3));
+            }
+            if (pos.equals("RateFeed")) {
+                return new RateFeedMessage(uuid, mylist.get(1), Short.valueOf(mylist.get(2)), mylist.get(3), mylist.get(4));
+            }
+            if (pos.equals("SearchProd")) {
+                return new SearchProductMessage(uuid, mylist.get(1), mylist.get(2));
             }
             if (pos.equals("ACKMessage")) {
-                return new SearchProductMessage(uuid, mylist.get(0));
+                return new ACKMessage(uuid);
             }
-            
             return null;
         }
     }
-
-    public Conversation CreateResponderConversation(String s, Envelope envelope){
-    return new Conversation();
-    }
-
-
 }
