@@ -1,0 +1,116 @@
+Testsuite: RateITProd.RateItemsControllerTests
+Tests run: 8, Failures: 5, Errors: 0, Time elapsed: 3.522 sec
+------------- Standard Output ---------------
+--Output from testIndex--
+--Output from testList--
+--Output from testCreate--
+--Output from testSave--
+--Output from testShow--
+--Output from testEdit--
+--Output from testUpdate--
+--Output from testDelete--
+------------- ---------------- ---------------
+------------- Standard Error -----------------
+--Output from testIndex--
+--Output from testList--
+--Output from testCreate--
+--Output from testSave--
+--Output from testShow--
+--Output from testEdit--
+--Output from testUpdate--
+--Output from testDelete--
+------------- ---------------- ---------------
+
+Testcase: testIndex took 2.063 sec
+Testcase: testList took 0.603 sec
+Testcase: testCreate took 0.117 sec
+Testcase: testSave took 0.234 sec
+	FAILED
+Assertion failed: 
+
+assert response.redirectedUrl == '/rateItems/show/1'
+       |        |             |
+       |        null          false
+       org.codehaus.groovy.grails.plugins.testing.GrailsMockHttpServletResponse@46904576
+
+junit.framework.AssertionFailedError: Assertion failed: 
+
+assert response.redirectedUrl == '/rateItems/show/1'
+       |        |             |
+       |        null          false
+       org.codehaus.groovy.grails.plugins.testing.GrailsMockHttpServletResponse@46904576
+
+	at RateITProd.RateItemsControllerTests.testSave(RateItemsControllerTests.groovy:48)
+
+Testcase: testShow took 0.165 sec
+	FAILED
+Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+junit.framework.AssertionFailedError: Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+	at RateITProd.RateItemsControllerTests.testShow(RateItemsControllerTests.groovy:62)
+
+Testcase: testEdit took 0.063 sec
+	FAILED
+Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+junit.framework.AssertionFailedError: Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+	at RateITProd.RateItemsControllerTests.testEdit(RateItemsControllerTests.groovy:80)
+
+Testcase: testUpdate took 0.079 sec
+	FAILED
+Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+junit.framework.AssertionFailedError: Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+	at RateITProd.RateItemsControllerTests.testUpdate(RateItemsControllerTests.groovy:100)
+
+Testcase: testDelete took 0.065 sec
+	FAILED
+Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+junit.framework.AssertionFailedError: Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+	at RateITProd.RateItemsControllerTests.testDelete(RateItemsControllerTests.groovy:144)
+

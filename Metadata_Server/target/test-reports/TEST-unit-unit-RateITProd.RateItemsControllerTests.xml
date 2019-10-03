@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="5" hostname="abhinavs-MacBook-Pro.local" name="RateITProd.RateItemsControllerTests" tests="8" time="3.522" timestamp="2019-03-06T01:54:15">
+  <properties />
+  <testcase classname="RateITProd.RateItemsControllerTests" name="testIndex" time="2.063" />
+  <testcase classname="RateITProd.RateItemsControllerTests" name="testList" time="0.603" />
+  <testcase classname="RateITProd.RateItemsControllerTests" name="testCreate" time="0.117" />
+  <testcase classname="RateITProd.RateItemsControllerTests" name="testSave" time="0.235">
+    <failure message="Assertion failed: &#xa;&#xa;assert response.redirectedUrl == &apos;/rateItems/show/1&apos;&#xa;       |        |             |&#xa;       |        null          false&#xa;       org.codehaus.groovy.grails.plugins.testing.GrailsMockHttpServletResponse@46904576&#xa;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: Assertion failed: 
+
+assert response.redirectedUrl == &apos;/rateItems/show/1&apos;
+       |        |             |
+       |        null          false
+       org.codehaus.groovy.grails.plugins.testing.GrailsMockHttpServletResponse@46904576
+
+	at RateITProd.RateItemsControllerTests.testSave(RateItemsControllerTests.groovy:48)
+</failure>
+  </testcase>
+  <testcase classname="RateITProd.RateItemsControllerTests" name="testShow" time="0.165">
+    <failure message="Assertion failed: &#xa;&#xa;assert rateItems.save() != null&#xa;       |         |      |&#xa;       |         null   false&#xa;       RateITProd.RateItems : (unsaved)&#xa;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+	at RateITProd.RateItemsControllerTests.testShow(RateItemsControllerTests.groovy:62)
+</failure>
+  </testcase>
+  <testcase classname="RateITProd.RateItemsControllerTests" name="testEdit" time="0.064">
+    <failure message="Assertion failed: &#xa;&#xa;assert rateItems.save() != null&#xa;       |         |      |&#xa;       |         null   false&#xa;       RateITProd.RateItems : (unsaved)&#xa;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+	at RateITProd.RateItemsControllerTests.testEdit(RateItemsControllerTests.groovy:80)
+</failure>
+  </testcase>
+  <testcase classname="RateITProd.RateItemsControllerTests" name="testUpdate" time="0.079">
+    <failure message="Assertion failed: &#xa;&#xa;assert rateItems.save() != null&#xa;       |         |      |&#xa;       |         null   false&#xa;       RateITProd.RateItems : (unsaved)&#xa;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+	at RateITProd.RateItemsControllerTests.testUpdate(RateItemsControllerTests.groovy:100)
+</failure>
+  </testcase>
+  <testcase classname="RateITProd.RateItemsControllerTests" name="testDelete" time="0.065">
+    <failure message="Assertion failed: &#xa;&#xa;assert rateItems.save() != null&#xa;       |         |      |&#xa;       |         null   false&#xa;       RateITProd.RateItems : (unsaved)&#xa;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: Assertion failed: 
+
+assert rateItems.save() != null
+       |         |      |
+       |         null   false
+       RateITProd.RateItems : (unsaved)
+
+	at RateITProd.RateItemsControllerTests.testDelete(RateItemsControllerTests.groovy:144)
+</failure>
+  </testcase>
+  <system-out><![CDATA[--Output from testIndex--
+--Output from testList--
+--Output from testCreate--
+--Output from testSave--
+--Output from testShow--
+--Output from testEdit--
+--Output from testUpdate--
+--Output from testDelete--
+]]></system-out>
+  <system-err><![CDATA[--Output from testIndex--
+--Output from testList--
+--Output from testCreate--
+--Output from testSave--
+--Output from testShow--
+--Output from testEdit--
+--Output from testUpdate--
+--Output from testDelete--
+]]></system-err>
+</testsuite>
